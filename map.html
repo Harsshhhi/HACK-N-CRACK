@@ -49,12 +49,10 @@
 <body>
     <div class="navbar">
         <div class="logo-container">
-            <img src="https://via.placeholder.com/100x100.png?text=HereAmLogo" alt="Here Am Logo">
+            <img src="https://via.placeholder.com/200x200.png?text=Here+Am+Logo" alt="Here Am Logo">
             <span>Here Am</span>
         </div>
-        <div class="hamburger">
-            <i class="fas fa-bars"></i>
-        </div>
+        <button class="hamburger" onclick="toggleMenu()"><i class="fas fa-bars"></i></button>
         <div class="nav-links">
             <a href="home.html"><i class="fas fa-home"></i> Home</a>
             <a href="guide.html"><i class="fas fa-book"></i> Guide</a>
@@ -86,24 +84,29 @@
 
     <footer>
         <div class="footer-content">
-            <div class="footer-logo">
-                <img src="https://via.placeholder.com/100x100.png?text=HereAmLogo" alt="Here Am Logo">
-                <p>Here Am - Your Safety Companion</p>
+            <div class="footer-section">
+                <h3>About Here Am</h3>
+                <p>Here Am is dedicated to women's safety, providing tools and resources to stay secure and connected.</p>
             </div>
-            <div class="footer-links">
-                <a href="#">About Us</a>
-                <a href="#">Contact Us</a>
-                <a href="#">Privacy Policy</a>
-                <a href="#">Terms of Service</a>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Contact</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
             </div>
-            <div class="footer-social">
-                <a href="#"><i class="fab fa-facebook-f"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            <div class="footer-section">
+                <h3>Connect With Us</h3>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                </div>
             </div>
         </div>
-        <p>© 2025 Here Am. All rights reserved. <i class="fas fa-heart"></i></p>
+        <p>© 2025 Here Am. All rights reserved. Made with <i class="fas fa-heart"></i></p>
     </footer>
 
     <script src="scripts.js"></script>
