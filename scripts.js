@@ -71,25 +71,3 @@ function calculateRoute() {
                 }
             });
         }, () => {
-            alert('Could not get your location. Please enable location services.');
-        });
-    }
-}
-
-// SOS functionality
-function sendSOS() {
-    const contact = document.getElementById('emergency-contact').value;
-    const message = "SOS: I need help! Please assist me immediately.";
-    if (contact) {
-        const smsLink = `sms:${contact}?body=${encodeURIComponent(message)}`;
-        window.location.href = smsLink;
-    } else {
-        alert('Please enter an emergency contact number.');
-    }
-}
-
-// Initialize page-specific functionality
-document.addEventListener('DOMContentLoaded', () => {
-    initAuthPage();
-    initMap();
-});
