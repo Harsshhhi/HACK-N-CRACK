@@ -1,0 +1,87 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Here Am - Safe Path</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo-container">
+            <img src="https://via.placeholder.com/40x40.png?text=Logo" alt="Here Am Logo">
+            <span>Here Am</span>
+        </div>
+        <a href="home.html"><i class="fas fa-home"></i> Home</a>
+        <a href="guide.html"><i class="fas fa-book"></i> Guide</a>
+        <a href="emergency.html"><i class="fas fa-exclamation-triangle"></i> Emergency</a>
+        <a href="map.html"><i class="fas fa-map-marked-alt"></i> Safe Path</a>
+        <a href="sos.html"><i class="fas fa-sos"></i> SOS</a>
+    </div>
+
+    <div class="page map-page">
+        <h1>Find a Safe Path</h1>
+        <div class="search-container">
+            <input type="text" id="destination" placeholder="Enter your destination">
+            <button onclick="calculateRoute()"><i class="fas fa-search"></i> Search</button>
+        </div>
+        <div id="map"></div>
+        <div class="safety-tips">
+            <h2>Travel Safety Tips</h2>
+            <ul>
+                <li><i class="fas fa-lightbulb"></i> Choose routes with good lighting and high foot traffic.</li>
+                <li><i class="fas fa-ban"></i> Avoid isolated areas, especially at night.</li>
+                <li><i class="fas fa-share-alt"></i> Share your route with a trusted contact.</li>
+                <li><i class="fas fa-battery-full"></i> Keep your phone charged and accessible.</li>
+            </ul>
+        </div>
+    </div>
+
+    <footer>
+        © 2025 Here Am. All rights reserved. <i class="fas fa-heart"></i>
+    </footer>
+
+    <script src="scripts.js"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>
+</body>
+</html>

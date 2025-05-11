@@ -1,0 +1,97 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Here Am - Home</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo-container">
+            <img src="https://via.placeholder.com/40x40.png?text=Logo" alt="Here Am Logo">
+            <span>Here Am</span>
+        </div>
+        <a href="home.html"><i class="fas fa-home"></i> Home</a>
+        <a href="guide.html"><i class="fas fa-book"></i> Guide</a>
+        <a href="emergency.html"><i class="fas fa-exclamation-triangle"></i> Emergency</a>
+        <a href="map.html"><i class="fas fa-map-marked-alt"></i> Safe Path</a>
+        <a href="sos.html"><i class="fas fa-sos"></i> SOS</a>
+    </div>
+
+    <div class="page home-page">
+        <h1>Welcome to Here Am</h1>
+        <p class="intro">Here Am is your trusted companion for safety, designed specifically for women. Explore our features to stay safe and connected wherever you are.</p>
+        <div class="features">
+            <div class="feature-card">
+                <img src="https://via.placeholder.com/50x50.png?text=Guide" alt="Guide Icon">
+                <h3>Guide</h3>
+                <p>Learn how to use our platform to ensure your safety with step-by-step instructions.</p>
+                <a href="guide.html">Explore Guide</a>
+            </div>
+            <div class="feature-card">
+                <img src="https://via.placeholder.com/50x50.png?text=Emergency" alt="Emergency Icon">
+                <h3>Emergency Contacts</h3>
+                <p>Quickly access emergency numbers for police, ambulance, and helplines.</p>
+                <a href="emergency.html">View Contacts</a>
+            </div>
+            <div class="feature-card">
+                <img src="https://via.placeholder.com/50x50.png?text=Map" alt="Map Icon">
+                <h3>Safe Path</h3>
+                <p>Find the safest routes to your destination with our map feature.</p>
+                <a href="map.html">Find a Path</a>
+            </div>
+            <div class="feature-card">
+                <img src="https://via.placeholder.com/50x50.png?text=SOS" alt="SOS Icon">
+                <h3>SOS Alert</h3>
+                <p>Send an emergency SOS message to your contacts with a single click.</p>
+                <a href="sos.html">Send SOS</a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        © 2025 Here Am. All rights reserved. <i class="fas fa-heart"></i>
+    </footer>
+</body>
+</html>

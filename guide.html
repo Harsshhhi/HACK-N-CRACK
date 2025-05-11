@@ -1,0 +1,101 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Here Am - Guide</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo-container">
+            <img src="https://via.placeholder.com/40x40.png?text=Logo" alt="Here Am Logo">
+            <span>Here Am</span>
+        </div>
+        <a href="home.html"><i class="fas fa-home"></i> Home</a>
+        <a href="guide.html"><i class="fas fa-book"></i> Guide</a>
+        <a href="emergency.html"><i class="fas fa-exclamation-triangle"></i> Emergency</a>
+        <a href="map.html"><i class="fas fa-map-marked-alt"></i> Safe Path</a>
+        <a href="sos.html"><i class="fas fa-sos"></i> SOS</a>
+    </div>
+
+    <div class="page guide-page">
+        <h1>How to Use Here Am</h1>
+        <div class="section">
+            <h2>Getting Started</h2>
+            <ul>
+                <li><i class="fas fa-user-plus"></i> Create an account by signing up with your phone number.</li>
+                <li><i class="fas fa-sign-in-alt"></i> Login using the one-time password (OTP) sent to your mobile.</li>
+                <li><i class="fas fa-home"></i> Explore the homepage to access all safety features.</li>
+            </ul>
+        </div>
+        <div class="section">
+            <h2>Using Emergency Features</h2>
+            <ul>
+                <li><i class="fas fa-exclamation-triangle"></i> Navigate to the Emergency page to find quick-dial numbers for police, ambulance, and helplines.</li>
+                <li><i class="fas fa-sos"></i> Use the SOS feature to send an immediate alert to your emergency contact.</li>
+            </ul>
+        </div>
+        <div class="section">
+            <h2>Traveling Safely</h2>
+            <ul>
+                <li><i class="fas fa-map-marked-alt"></i> Use the Safe Path feature to find recommended routes to your destination.</li>
+                <li><i class="fas fa-lightbulb"></i> Follow our safety tips while traveling, such as staying in well-lit areas.</li>
+            </ul>
+        </div>
+        <div class="section">
+            <h2>Staying Connected</h2>
+            <ul>
+                <li><i class="fas fa-battery-full"></i> Keep your phone charged and the Here Am website accessible at all times.</li>
+                <li><i class="fas fa-share-alt"></i> Share your location with trusted contacts using the SOS feature if needed.</li>
+            </ul>
+        </div>
+    </div>
+
+    <footer>
+        © 2025 Here Am. All rights reserved. <i class="fas fa-heart"></i>
+    </footer>
+
+    <script src="scripts.js"></script>
+</body>
+</html>

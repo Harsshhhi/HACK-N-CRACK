@@ -1,0 +1,104 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Here Am - Signup</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="page signup-page">
+        <div class="auth-container">
+            <div class="logo">
+                <div class="background"></div>
+                <img src="https://via.placeholder.com/120x120.png?text=Profile" alt="Profile Icon">
+            </div>
+            <div class="text-logo">
+                Here <span class="symbol">♀</span> Am
+            </div>
+            <p style="margin-bottom: 20px; font-size: 14px; line-height: 1.5;">
+                Join Here Am to access a suite of safety tools designed for women. Stay connected, travel safely, and get help when you need it most.
+            </p>
+            <div class="input-container">
+                <span class="phone-icon"><i class="fas fa-user"></i></span>
+                <input type="text" placeholder="Full Name">
+            </div>
+            <div class="input-container">
+                <span class="phone-icon"><i class="fas fa-envelope"></i></span>
+                <input type="email" placeholder="Email Address">
+            </div>
+            <div class="input-container">
+                <span class="phone-icon"><i class="fas fa-phone"></i></span>
+                <input type="text" placeholder="Phone Number">
+                <span class="counter">0/10</span>
+            </div>
+            <div class="input-container">
+                <span class="phone-icon"><i class="fas fa-address-book"></i></span>
+                <input type="tel" placeholder="Emergency Contact Number">
+            </div>
+            <div class="info">
+                <span class="info-icon">i</span>
+                We will send One TIME Password on this mobile number
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 20px; font-size: 14px;">
+                <input type="checkbox" id="terms" style="margin-right: 10px;">
+                <label for="terms">I agree to the <a href="#" style="color: #ff6f61; text-decoration: none;">Terms and Conditions</a></label>
+            </div>
+            <button class="signup-btn" onclick="signup()"><i class="fas fa-user-plus"></i> Signup</button>
+            <a href="index.html" class="login-link">Already have an account? Login here</a>
+        </div>
+    </div>
+
+    <script src="scripts.js"></script>
+    <script>
+        function signup() {
+            const termsCheckbox = document.getElementById('terms');
+            if (!termsCheckbox.checked) {
+                alert('Please agree to the Terms and Conditions to proceed.');
+                return;
+            }
+            window.location.href = 'home.html';
+        }
+    </script>
+</body>
+</html>
